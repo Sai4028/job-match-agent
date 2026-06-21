@@ -2,7 +2,7 @@ import streamlit as st
 import json
 
 from service.profile_manager import load_profile
-from service.job_search import search_jobs
+from service.linkedin_jobs import search_jobs
 from service.ai_matcher import evaluate_job_fit
 
 st.title("Job Search")

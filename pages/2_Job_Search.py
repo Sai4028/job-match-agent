@@ -95,6 +95,10 @@ if st.button("Search Jobs"):
                         ""
                     )
 
+                    # Skip poor matches
+                    if score < 40:
+                        continue
+
                 except Exception as e:
 
                     score = 0

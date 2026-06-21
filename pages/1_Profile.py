@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.abspath("."))
 
-from services.resume_parser import extract_resume_text
+from service.resume_parser import extract_resume_text
 
 st.title("Profile Setup")
 

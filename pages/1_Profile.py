@@ -37,4 +37,21 @@ if resume:
     )
 
 if st.button("Save Profile"):
+
+    profile = {
+        "roles": roles,
+        "locations": locations
+    }
+
+    save_profile(profile)
+
     st.success("Profile saved successfully")
+from service.profile_manager import load_profile
+
+saved_profile = load_profile()
+
+if saved_profile:
+
+    st.subheader("Saved Profile")
+
+    st.json(saved_profile)

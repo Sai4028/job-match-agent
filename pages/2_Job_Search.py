@@ -4,6 +4,7 @@ import json
 from service.profile_manager import load_profile
 from service.linkedin_jobs import search_jobs
 from service.ai_matcher import evaluate_job_fit
+from service.resume_generator import generate_resume
 
 st.title("Job Search")
 
@@ -125,11 +126,33 @@ if st.button("Search Jobs"):
                         )
                 
                 with col2:
-                    st.button(
+
+                    if st.button(
                         "📄 Generate Resume",
                         key=f"resume_{job['title']}"
-                    )
+                    ):
                 
+                        with st.spinner(
+                            "Generating tailored resume..."
+                        ):
+                
+                            tailored_resume = generate_resume(
+                                ai_profile,
+                                job.get(
+                                    "title",
+                                    ""
+                                ),
+                                job.get(
+                                    "description",
+                                    ""
+                                ),
+                                api_key
+                            )
+                
+                            st.session_state[
+                                f"resume_{job['title']}"
+                            ] = tailored_resume
+
                 with st.expander("View Analysis"):
                 
                     st.write(
@@ -141,3 +164,18 @@ if st.button("Search Jobs"):
                     )
                 
                 st.divider()
+
+                resume_key = f"resume_{job['title']}"
+
+                if resume_key in st.session_state:
+                
+                    with st.expander(
+                        "📄 Tailored Resume",
+                        expanded=True
+                    ):
+                
+                        st.markdown(
+                            st.session_state[
+                                resume_key
+                            ]
+                        )

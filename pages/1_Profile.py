@@ -39,8 +39,9 @@ if resume:
 if st.button("Save Profile"):
 
     profile = {
-        "roles": roles,
-        "locations": locations
+    "roles": roles,
+    "locations": locations,
+    "resume_text": resume_text if resume else ""
     }
 
     save_profile(profile)

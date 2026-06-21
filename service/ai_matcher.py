@@ -30,9 +30,11 @@ Job Description:
 Return ONLY JSON:
 
 {{
-  "score": 0,
-  "recommendation": "",
-  "reason": ""
+  "score":0,
+  "recommendation":"",
+  "strengths":[],
+  "gaps":[],
+  "resume_improvements":[]
 }}
 
 Rules:

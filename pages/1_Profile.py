@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath("."))
 
 from service.resume_parser import extract_resume_text
-from service.profile_manager import save_profile
+from service.profile_manager import save_profile, load_profile
 from service.profile_extractor import extract_profile
 
 
@@ -56,7 +56,6 @@ if st.button("Save Profile"):
     save_profile(profile)
 
     st.success("Profile saved successfully")
-from service.profile_manager import load_profile
 
 saved_profile = load_profile()
 

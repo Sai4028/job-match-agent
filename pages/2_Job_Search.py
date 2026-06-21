@@ -107,19 +107,25 @@ if st.button("Search Jobs"):
 
                 st.info(
                     f"""
-Role: {job.get('title', 'N/A')}
+                Role: {job.get('title', 'N/A')}
+                
+                Company: {job.get('company', 'N/A')}
+                
+                Location: {job.get('location', 'N/A')}
+                
+                Score: {score}%
+                
+                Recommendation: {recommendation}
+                
+                Reason:
+                {reason}
+                """
+                )
+                if job.get("url"):
 
-Company: {job.get('company', 'N/A')}
-
-Location: {job.get('location', 'N/A')}
-
-Score: {score}%
-
-Recommendation: {recommendation}
-
-Reason:
-{reason}
-"""
+                st.link_button(
+                    "View Job",
+                    job["url"]
                 )
 
                 if job.get("apply_link"):

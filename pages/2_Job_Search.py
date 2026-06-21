@@ -50,26 +50,33 @@ if st.button("Search Jobs"):
     st.subheader("Jobs Found")
 
     for job in jobs:
+
+    score = calculate_score(
+        job["title"],
+        recommended_roles
+    )
+
+    recommendation = "Skip"
+
+    if score >= 90:
+        recommendation = "Strong Apply"
+
+    elif score >= 75:
+        recommendation = "Apply"
+
+    elif score >= 60:
+        recommendation = "Consider"
+
+    st.info(
+            f"""
+    Role: {job['title']}
     
-        score = calculate_score(
-            job["title"],
-            recommended_roles
-        )
+    Company: {job['company']}
     
-        st.write("------------")
+    Location: {job['location']}
     
-        st.write(
-            f"Role: {job['title']}"
-        )
+    Score: {score}%
     
-        st.write(
-            f"Company: {job['company']}"
-        )
-    
-        st.write(
-            f"Location: {job['location']}"
-        )
-    
-        st.write(
-            f"Confidence Score: {score}%"
+    Recommendation: {recommendation}
+    """
         )

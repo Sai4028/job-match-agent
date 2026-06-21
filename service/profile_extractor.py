@@ -23,8 +23,12 @@ def extract_profile(resume_text, api_key):
     {resume_text}
     """
 
-    response = model.generate_content(prompt)
-
-    content = response.text.replace("```json", "").replace("```", "")
-
-    return json.loads(content)
+    try:
+        response = model.generate_content(prompt)
+    
+        content = response.text
+    
+        return content
+        
+    except Exception as e:
+        return f"ERROR: {str(e)}"

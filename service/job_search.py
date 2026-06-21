@@ -1,3 +1,4 @@
+from service.remoteok_search import search_remoteok_jobs
 import requests
 
 
@@ -85,8 +86,11 @@ def search_jobs(selected_roles):
             f"Total Product Jobs Retrieved: {len(jobs)}"
         )
 
-        return jobs[:20]
+        remote_jobs = search_remoteok_jobs()
 
+        all_jobs = jobs + remote_jobs
+        
+        return all_jobs[:30]
     except Exception as e:
 
         print(str(e))

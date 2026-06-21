@@ -13,36 +13,18 @@ def search_jobs(selected_roles):
 
         data = response.json()
 
-        search_terms = []
-
-        for role in selected_roles:
-
-            role_lower = role.lower()
-
-            if "product" in role_lower:
-                search_terms.extend([
-                    "product manager",
-                    "product owner",
-                    "product lead",
-                    "head of product",
-                    "principal product",
-                    "group product"
-                ])
-
-            if "ai" in role_lower:
-                search_terms.extend([
-                    "ai product",
-                    "genai",
-                    "artificial intelligence"
-                ])
-
-            if "erp" in role_lower:
-                search_terms.extend([
-                    "erp",
-                    "enterprise"
-                ])
-
-        search_terms = list(set(search_terms))
+        product_keywords = [
+            "product manager",
+            "product owner",
+            "product lead",
+            "head of product",
+            "principal product manager",
+            "group product manager",
+            "senior product manager",
+            "ai product manager",
+            "technical product manager",
+            "platform product manager"
+        ]
 
         for job in data.get("data", []):
 
@@ -51,14 +33,9 @@ def search_jobs(selected_roles):
                 ""
             ).lower()
 
-            description = job.get(
-                "description",
-                ""
-            ).lower()
-
             if any(
-                term in title or term in description
-                for term in search_terms
+                keyword in title
+                for keyword in product_keywords
             ):
 
                 jobs.append(
@@ -86,7 +63,7 @@ def search_jobs(selected_roles):
                     }
                 )
 
-        return jobs[:10]
+        return jobs[:20]
 
     except Exception as e:
 

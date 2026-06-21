@@ -52,7 +52,8 @@ if st.button("Save Profile"):
     profile = {
     "roles": roles,
     "locations": locations,
-    "resume_text": resume_text if resume else ""
+    "resume_text": resume_text if resume else "",
+    "ai_profile": profile_data if resume else {}
     }
 
     save_profile(profile)

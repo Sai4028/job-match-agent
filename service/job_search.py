@@ -23,19 +23,11 @@ def search_jobs(selected_roles):
 
                     jobs.append(
                         {
-                            "title": title,
-                            "company": job.get(
-                                "company_name",
-                                "Unknown"
-                            ),
-                            "location": job.get(
-                                "location",
-                                "Remote"
-                            ),
-                            "apply_link": job.get(
-                                "url",
-                                ""
-                            )
+                            "title": job.get("title"),
+                            "company": job.get("company_name"),
+                            "location": job.get("location"),
+                            "description": job.get("description"),
+                            "apply_link": job.get("url")
                         }
                     )
 

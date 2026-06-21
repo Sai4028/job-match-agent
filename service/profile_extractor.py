@@ -9,17 +9,38 @@ def extract_profile(resume_text, api_key):
     model = genai.GenerativeModel("gemini-2.5-flash")
 
     prompt = f"""
-    Analyze the following resume and return ONLY valid JSON.
-
-    Extract:
-    - name
-    - total_experience
-    - current_role
-    - skills
-    - domains
-    - certifications
-
+    You are an expert resume analyzer.
+    
+    Analyze the resume and return ONLY valid JSON.
+    
+    Schema:
+    
+    {{
+      "name": "",
+      "total_experience": "",
+      "current_role": "",
+      "skills": {{
+          "Product": [],
+          "AI & Data": [],
+          "Execution": []
+      }},
+      "domains": [],
+      "certifications": [],
+      "recommended_roles": [],
+      "seniority_level": "",
+      "preferred_industries": []
+    }}
+    
+    Rules:
+    - Return only valid JSON.
+    - No markdown.
+    - No explanations.
+    - Infer suitable roles from experience and skills.
+    - Infer seniority level.
+    - Infer industries worked in.
+    
     Resume:
+    
     {resume_text}
     """
 

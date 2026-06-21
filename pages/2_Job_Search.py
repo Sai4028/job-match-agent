@@ -13,6 +13,11 @@ if not profile:
 
 ai_profile = profile.get("ai_profile", {})
 
+# Handle old saved profiles where ai_profile is stored as string
+if isinstance(ai_profile, str):
+    import json
+    ai_profile = json.loads(ai_profile)
+
 recommended_roles = ai_profile.get(
     "recommended_roles",
     []
@@ -23,7 +28,6 @@ st.subheader("Recommended Roles")
 selected_roles = []
 
 for role in recommended_roles:
-
     if st.checkbox(role, value=True):
         selected_roles.append(role)
 
@@ -51,32 +55,32 @@ if st.button("Search Jobs"):
 
     for job in jobs:
 
-    score = calculate_score(
-        job["title"],
-        recommended_roles
-    )
+        score = calculate_score(
+            job["title"],
+            recommended_roles
+        )
 
-    recommendation = "Skip"
+        recommendation = "Skip"
 
-    if score >= 90:
-        recommendation = "Strong Apply"
+        if score >= 90:
+            recommendation = "Strong Apply"
 
-    elif score >= 75:
-        recommendation = "Apply"
+        elif score >= 75:
+            recommendation = "Apply"
 
-    elif score >= 60:
-        recommendation = "Consider"
+        elif score >= 60:
+            recommendation = "Consider"
 
-    st.info(
+        st.info(
             f"""
-    Role: {job['title']}
-    
-    Company: {job['company']}
-    
-    Location: {job['location']}
-    
-    Score: {score}%
-    
-    Recommendation: {recommendation}
-    """
+Role: {job['title']}
+
+Company: {job['company']}
+
+Location: {job['location']}
+
+Score: {score}%
+
+Recommendation: {recommendation}
+"""
         )

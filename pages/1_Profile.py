@@ -56,3 +56,9 @@ if saved_profile:
     st.subheader("Saved Profile")
 
     st.json(saved_profile)
+
+if saved_profile:
+
+    st.write(
+        f"Resume Characters: {len(saved_profile.get('resume_text',''))}"
+    )

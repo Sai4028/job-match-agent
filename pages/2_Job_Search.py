@@ -24,6 +24,9 @@ recommended_roles = ai_profile.get(
     "recommended_roles",
     []
 )
+st.subheader("Debug - Recommended Roles")
+
+st.write(recommended_roles)
 
 st.subheader("Recommended Roles")
 

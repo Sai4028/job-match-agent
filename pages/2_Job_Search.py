@@ -2,6 +2,7 @@ import streamlit as st
 from service.profile_manager import load_profile
 from service.job_search import search_jobs
 from service.scoring_engine import calculate_score
+import json
 
 st.title("Job Search")
 
@@ -13,9 +14,8 @@ if not profile:
 
 ai_profile = profile.get("ai_profile", {})
 
-# Handle old saved profiles where ai_profile is stored as string
+# Handle old profiles where ai_profile was saved as string
 if isinstance(ai_profile, str):
-    import json
     ai_profile = json.loads(ai_profile)
 
 recommended_roles = ai_profile.get(
@@ -53,39 +53,42 @@ if st.button("Search Jobs"):
 
     st.subheader("Jobs Found")
 
-    for job in jobs:
+    if not jobs:
+        st.warning("No jobs found.")
+    else:
 
-        score = calculate_score(
-            job["title"],
-            recommended_roles
-        )
+        for job in jobs:
 
-        recommendation = "Skip"
+            score = calculate_score(
+                job.get("title", ""),
+                recommended_roles
+            )
 
-        if score >= 90:
-            recommendation = "Strong Apply"
+            recommendation = "Skip"
 
-        elif score >= 75:
-            recommendation = "Apply"
+            if score >= 90:
+                recommendation = "Strong Apply"
+            elif score >= 75:
+                recommendation = "Apply"
+            elif score >= 60:
+                recommendation = "Consider"
 
-        elif score >= 60:
-            recommendation = "Consider"
+            st.info(
+                f"""
+Role: {job.get('title', 'N/A')}
 
-        st.info(
-            f"""
-Role: {job['title']}
+Company: {job.get('company', 'N/A')}
 
-Company: {job['company']}
-
-Location: {job['location']}
+Location: {job.get('location', 'N/A')}
 
 Score: {score}%
 
 Recommendation: {recommendation}
 """
-        )
-        if job.get("apply_link"):
-        st.link_button(
-            "Apply",
-            job["apply_link"]
-        )
+            )
+
+            if job.get("apply_link"):
+                st.link_button(
+                    "Apply",
+                    job["apply_link"]
+                )

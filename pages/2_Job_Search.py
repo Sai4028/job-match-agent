@@ -105,32 +105,39 @@ if st.button("Search Jobs"):
                     recommendation = "Error"
                     reason = str(e)
 
-                st.info(
+                st.markdown(
                     f"""
-                Role: {job.get('title', 'N/A')}
+                ### 🎯 {job['title']}
                 
-                Company: {job.get('company', 'N/A')}
+                **{job['company']}** | {job['location']}
                 
-                Location: {job.get('location', 'N/A')}
-                
-                Score: {score}%
-                
-                Recommendation: {recommendation}
-                
-                Reason:
-                {reason}
+                **Match Score:** {score}%
                 """
                 )
-                if job.get("url"):
-
-                    st.link_button(
-                        "View Job",
-                        job["url"]
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    if job.get("url"):
+                        st.link_button(
+                            "🔗 View Job",
+                            job["url"]
+                        )
+                
+                with col2:
+                    st.button(
+                        "📄 Generate Resume",
+                        key=f"resume_{job['title']}"
                     )
-
-                if job.get("apply_link"):
-
-                    st.link_button(
-                        "Apply",
-                        job["apply_link"]
+                
+                with st.expander("View Analysis"):
+                
+                    st.write(
+                        f"**Recommendation:** {recommendation}"
                     )
+                
+                    st.write(
+                        f"**Reason:** {reason}"
+                    )
+                
+                st.divider()

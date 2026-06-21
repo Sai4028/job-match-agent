@@ -1,5 +1,7 @@
 import streamlit as st
 import json
+import subprocess
+import sys
 
 from service.profile_manager import load_profile
 from service.linkedin_jobs import search_jobs
@@ -66,8 +68,11 @@ if st.button("Search Jobs"):
 
     with st.spinner("Searching and evaluating jobs..."):
 
+        subprocess.run(
+            [sys.executable, "search_jobs.py"]
+        )
+        
         jobs = search_jobs(selected_roles)
-
         evaluated_jobs = []
 
         for job in jobs:

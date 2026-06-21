@@ -153,7 +153,7 @@ if st.session_state["evaluated_jobs"]:
 
             if st.button(
                 "📄 Generate Resume",
-                key=f"resume_{job['title']}"
+                key=f"generate_{job['title']}"
             ):
 
                 try:

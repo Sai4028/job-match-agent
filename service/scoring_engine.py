@@ -1,4 +1,4 @@
-def evaluate_job_fit(role, recommended_roles):
+def calculate_score(role, recommended_roles):
 
     score = 50
 

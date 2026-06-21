@@ -8,6 +8,9 @@ from service.resume_generator import generate_resume
 
 st.title("Job Search")
 
+if "evaluated_jobs" not in st.session_state:
+    st.session_state["evaluated_jobs"] = []
+
 profile = load_profile()
 
 if not profile:
@@ -25,8 +28,8 @@ recommended_roles = ai_profile.get(
     "recommended_roles",
     []
 )
-st.subheader("Debug - Recommended Roles")
 
+st.subheader("Debug - Recommended Roles")
 st.write(recommended_roles)
 
 st.subheader("Recommended Roles")
@@ -56,126 +59,170 @@ st.write(
     )
 )
 
+# SEARCH JOBS
+
 if st.button("Search Jobs"):
 
     with st.spinner("Searching and evaluating jobs..."):
 
         jobs = search_jobs(selected_roles)
 
-        st.subheader("Jobs Found")
+        evaluated_jobs = []
 
-        if not jobs:
+        for job in jobs:
 
-            st.warning("No jobs found.")
+            try:
 
-        else:
+                result = evaluate_job_fit(
+                    ai_profile,
+                    job.get("title", ""),
+                    job.get("description", ""),
+                    api_key
+                )
 
-            for job in jobs:
+                score = result.get(
+                    "score",
+                    0
+                )
+
+                if score < 40:
+                    continue
+
+                job["evaluation"] = result
+
+                evaluated_jobs.append(job)
+
+            except Exception as e:
+
+                st.error(
+                    f"Error evaluating {job.get('title','')}: {str(e)}"
+                )
+
+        st.session_state["evaluated_jobs"] = evaluated_jobs
+
+# DISPLAY JOBS
+
+if st.session_state["evaluated_jobs"]:
+
+    st.subheader("Jobs Found")
+
+    for job in st.session_state["evaluated_jobs"]:
+
+        result = job.get(
+            "evaluation",
+            {}
+        )
+
+        score = result.get(
+            "score",
+            0
+        )
+
+        recommendation = result.get(
+            "recommendation",
+            "Unknown"
+        )
+
+        reason = result.get(
+            "reason",
+            ""
+        )
+
+        st.markdown(
+            f"""
+### 🎯 {job['title']}
+
+**{job['company']}** | {job['location']}
+
+**Match Score:** {score}%
+"""
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            if job.get("url"):
+
+                st.link_button(
+                    "🔗 View Job",
+                    job["url"]
+                )
+
+        with col2:
+
+            if st.button(
+                "📄 Generate Resume",
+                key=f"resume_{job['title']}"
+            ):
 
                 try:
 
-                    result = evaluate_job_fit(
-                        ai_profile,
-                        job.get("title", ""),
-                        job.get("description", ""),
-                        api_key
-                    )
+                    with st.spinner(
+                        "Generating tailored resume..."
+                    ):
 
-                    score = result.get(
-                        "score",
-                        0
-                    )
+                        tailored_resume = generate_resume(
+                            ai_profile,
+                            job.get(
+                                "title",
+                                ""
+                            ),
+                            job.get(
+                                "description",
+                                ""
+                            ),
+                            api_key
+                        )
 
-                    recommendation = result.get(
-                        "recommendation",
-                        "Unknown"
-                    )
+                        st.write(
+                            "TYPE:",
+                            type(tailored_resume)
+                        )
 
-                    reason = result.get(
-                        "reason",
-                        ""
-                    )
+                        st.write(
+                            "VALUE:",
+                            tailored_resume
+                        )
 
-                    # Skip poor matches
-                    if score < 40:
-                        continue
+                        st.session_state[
+                            f"resume_{job['title']}"
+                        ] = tailored_resume
 
                 except Exception as e:
 
-                    score = 0
-                    recommendation = "Error"
-                    reason = str(e)
+                    st.error(
+                        f"Resume Generation Error: {str(e)}"
+                    )
 
-                st.markdown(
-                    f"""
-                ### 🎯 {job['title']}
-                
-                **{job['company']}** | {job['location']}
-                
-                **Match Score:** {score}%
-                """
+        with st.expander("View Analysis"):
+
+            st.write(
+                f"**Recommendation:** {recommendation}"
+            )
+
+            st.write(
+                f"**Reason:** {reason}"
+            )
+
+            st.json(result)
+
+        resume_key = f"resume_{job['title']}"
+
+        if (
+            resume_key in st.session_state
+            and st.session_state[resume_key]
+        ):
+
+            with st.expander(
+                "📄 Tailored Resume",
+                expanded=True
+            ):
+
+                st.write(
+                    st.session_state[
+                        resume_key
+                    ]
                 )
-                
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    if job.get("url"):
-                        st.link_button(
-                            "🔗 View Job",
-                            job["url"]
-                        )
-                
-                with col2:
 
-                    if st.button(
-                        "📄 Generate Resume",
-                        key=f"resume_{job['title']}"
-                    ):
-                
-                        with st.spinner(
-                            "Generating tailored resume..."
-                        ):
-                
-                            tailored_resume = generate_resume(
-                                ai_profile,
-                                job.get(
-                                    "title",
-                                    ""
-                                ),
-                                job.get(
-                                    "description",
-                                    ""
-                                ),
-                                api_key
-                            )
-                
-                            st.session_state[
-                                f"resume_{job['title']}"
-                            ] = tailored_resume
-
-                with st.expander("View Analysis"):
-                
-                    st.write(
-                        f"**Recommendation:** {recommendation}"
-                    )
-                
-                    st.write(
-                        f"**Reason:** {reason}"
-                    )
-                
-                st.divider()
-
-                resume_key = f"resume_{job['title']}"
-
-                if resume_key in st.session_state:
-                
-                    with st.expander(
-                        "📄 Tailored Resume",
-                        expanded=True
-                    ):
-                
-                        st.markdown(
-                            st.session_state[
-                                resume_key
-                            ]
-                        )
+        st.divider()

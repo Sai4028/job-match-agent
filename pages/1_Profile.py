@@ -6,6 +6,8 @@ sys.path.append(os.path.abspath("."))
 
 from service.resume_parser import extract_resume_text
 from service.profile_manager import save_profile
+from service.profile_extractor import extract_profile
+
 
 st.title("Profile Setup")
 
@@ -27,6 +29,13 @@ locations = st.text_area(
 if resume:
 
     resume_text = extract_resume_text(resume)
+
+    api_key = st.secrets["GEMINI_API_KEY"]
+
+    profile_data = extract_profile(
+        resume_text,
+        api_key
+    )
 
     st.subheader("Resume Preview")
 
@@ -62,3 +71,6 @@ if saved_profile:
     st.write(
         f"Resume Characters: {len(saved_profile.get('resume_text',''))}"
     )
+st.subheader("AI Extracted Profile")
+
+st.json(profile_data)

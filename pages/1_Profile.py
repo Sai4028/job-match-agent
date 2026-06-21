@@ -32,6 +32,8 @@ if resume:
 
     api_key = st.secrets["GEMINI_API_KEY"]
 
+    st.write("Gemini API Key Loaded")
+
     profile_data = extract_profile(
         resume_text,
         api_key
@@ -70,6 +72,8 @@ if saved_profile:
     st.write(
         f"Resume Characters: {len(saved_profile.get('resume_text',''))}"
     )
-st.subheader("AI Extracted Profile")
+if resume:
 
-st.json(profile_data)
+    st.subheader("AI Extracted Profile")
+
+    st.write(profile_data)

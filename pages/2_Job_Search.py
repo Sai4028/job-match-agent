@@ -123,10 +123,10 @@ if st.button("Search Jobs"):
                 )
                 if job.get("url"):
 
-                st.link_button(
-                    "View Job",
-                    job["url"]
-                )
+                    st.link_button(
+                        "View Job",
+                        job["url"]
+                    )
 
                 if job.get("apply_link"):
 

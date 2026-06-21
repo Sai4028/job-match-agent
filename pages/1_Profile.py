@@ -1,4 +1,8 @@
-import streamlit as st
+import sys
+import os
+
+sys.path.append(os.path.abspath("."))
+
 from services.resume_parser import extract_resume_text
 
 st.title("Profile Setup")

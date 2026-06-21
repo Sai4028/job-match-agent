@@ -17,7 +17,7 @@ def generate_resume(
     )
 
     prompt = f"""
-You are an expert resume writer.
+You are an expert ATS Resume Consultant.
 
 Candidate Profile:
 
@@ -31,19 +31,46 @@ Target Job Description:
 
 {job_description}
 
-Create a tailored resume.
+Your task is to tailor the candidate's resume for the target role.
 
-Provide:
+IMPORTANT RULES:
 
-1. Professional Summary
+1. Use only information available in the candidate profile.
+2. Do NOT invent achievements.
+3. Do NOT invent percentages, revenue impact, savings, growth numbers or metrics.
+4. Do NOT invent company names.
+5. Do NOT invent dates.
+6. Do NOT generate placeholders such as:
+   - [Phone Number]
+   - [Email Address]
+   - [LinkedIn URL]
+   - [Location]
+7. If information is unavailable, omit it.
+8. Preserve all existing candidate information.
+9. Focus on improving ATS relevance.
+10. Highlight the most relevant skills and experiences for the target role.
 
-2. Key Skills
+Return the output in the following format:
 
-3. Experience Highlights
+# Professional Summary
 
-4. ATS Keywords
+Provide a tailored professional summary.
 
-Make it highly relevant for the target role.
+# Key Skills To Highlight
+
+List the most relevant skills.
+
+# Experience Areas To Emphasize
+
+List relevant experience themes and accomplishments already present in the profile.
+
+# ATS Keywords
+
+List ATS keywords relevant to the target role.
+
+# Resume Optimization Suggestions
+
+Provide specific suggestions to improve the existing resume for this job.
 """
 
     response = model.generate_content(

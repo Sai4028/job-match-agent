@@ -5,6 +5,7 @@ from service.profile_manager import load_profile
 from service.linkedin_jobs import search_jobs
 from service.ai_matcher import evaluate_job_fit
 from service.resume_generator import generate_resume
+from service.docx_generator import create_resume_docx
 
 st.title("Job Search")
 
@@ -208,11 +209,25 @@ if st.session_state["evaluated_jobs"]:
                 "📄 Tailored Resume",
                 expanded=True
             ):
-
+            
+                resume_content = st.session_state[
+                    resume_key
+                ]
+            
                 st.markdown(
-                    st.session_state[
-                        resume_key
-                    ]
+                    resume_content
+                )
+            
+                docx_file = create_resume_docx(
+                    resume_content
+                )
+            
+                st.download_button(
+                    label="⬇️ Download Resume",
+                    data=docx_file,
+                    file_name=f"{job['title']}_Resume.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    key=f"download_{job['title']}"
                 )
 
         st.divider()

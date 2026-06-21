@@ -84,3 +84,7 @@ Score: {score}%
 Recommendation: {recommendation}
 """
         )
+st.link_button(
+    "Apply",
+    job["apply_link"]
+)

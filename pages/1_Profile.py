@@ -5,6 +5,7 @@ import os
 sys.path.append(os.path.abspath("."))
 
 from service.resume_parser import extract_resume_text
+from service.profile_manager import save_profile
 
 st.title("Profile Setup")
 

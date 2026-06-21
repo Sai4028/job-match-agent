@@ -1,5 +1,6 @@
 import streamlit as st
 from service.profile_manager import load_profile
+from service.job_search import search_jobs
 
 st.title("Job Search")
 
@@ -42,6 +43,9 @@ st.write(
 )
 
 if st.button("Search Jobs"):
-    st.success(
-        f"Searching jobs for {len(selected_roles)} selected roles"
-    )
+
+    jobs = search_jobs(selected_roles)
+
+    st.subheader("Jobs Found")
+
+    st.write(jobs)

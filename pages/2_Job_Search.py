@@ -1,6 +1,7 @@
 import streamlit as st
 from service.profile_manager import load_profile
 from service.job_search import search_jobs
+from service.scoring_engine import calculate_score
 
 st.title("Job Search")
 
@@ -48,4 +49,27 @@ if st.button("Search Jobs"):
 
     st.subheader("Jobs Found")
 
-    st.write(jobs)
+    for job in jobs:
+    
+        score = calculate_score(
+            job["title"],
+            recommended_roles
+        )
+    
+        st.write("------------")
+    
+        st.write(
+            f"Role: {job['title']}"
+        )
+    
+        st.write(
+            f"Company: {job['company']}"
+        )
+    
+        st.write(
+            f"Location: {job['location']}"
+        )
+    
+        st.write(
+            f"Confidence Score: {score}%"
+        )

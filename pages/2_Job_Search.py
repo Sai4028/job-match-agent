@@ -175,16 +175,6 @@ if st.session_state["evaluated_jobs"]:
                             api_key
                         )
 
-                        st.write(
-                            "TYPE:",
-                            type(tailored_resume)
-                        )
-
-                        st.write(
-                            "VALUE:",
-                            tailored_resume
-                        )
-
                         st.session_state[
                             f"resume_{job['title']}"
                         ] = tailored_resume
@@ -219,7 +209,7 @@ if st.session_state["evaluated_jobs"]:
                 expanded=True
             ):
 
-                st.write(
+                st.markdown(
                     st.session_state[
                         resume_key
                     ]

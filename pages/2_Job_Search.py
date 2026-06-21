@@ -1,8 +1,9 @@
 import streamlit as st
+import json
+
 from service.profile_manager import load_profile
 from service.job_search import search_jobs
-from service.scoring_engine import calculate_score
-import json
+from service.ai_matcher import evaluate_job_fit
 
 st.title("Job Search")
 
@@ -12,9 +13,10 @@ if not profile:
     st.warning("Please create your profile first.")
     st.stop()
 
+api_key = st.secrets["GEMINI_API_KEY"]
+
 ai_profile = profile.get("ai_profile", {})
 
-# Handle old profiles where ai_profile was saved as string
 if isinstance(ai_profile, str):
     ai_profile = json.loads(ai_profile)
 
@@ -28,10 +30,12 @@ st.subheader("Recommended Roles")
 selected_roles = []
 
 for role in recommended_roles:
+
     if st.checkbox(role, value=True):
         selected_roles.append(role)
 
 st.subheader("Preferred Industries")
+
 st.write(
     ai_profile.get(
         "preferred_industries",
@@ -40,6 +44,7 @@ st.write(
 )
 
 st.subheader("Locations")
+
 st.write(
     profile.get(
         "locations",
@@ -49,32 +54,52 @@ st.write(
 
 if st.button("Search Jobs"):
 
-    jobs = search_jobs(selected_roles)
+    with st.spinner("Searching and evaluating jobs..."):
 
-    st.subheader("Jobs Found")
+        jobs = search_jobs(selected_roles)
 
-    if not jobs:
-        st.warning("No jobs found.")
-    else:
+        st.subheader("Jobs Found")
 
-        for job in jobs:
+        if not jobs:
 
-            score = calculate_score(
-                job.get("title", ""),
-                recommended_roles
-            )
+            st.warning("No jobs found.")
 
-            recommendation = "Skip"
+        else:
 
-            if score >= 90:
-                recommendation = "Strong Apply"
-            elif score >= 75:
-                recommendation = "Apply"
-            elif score >= 60:
-                recommendation = "Consider"
+            for job in jobs:
 
-            st.info(
-                f"""
+                try:
+
+                    result = evaluate_job_fit(
+                        ai_profile,
+                        job.get("title", ""),
+                        job.get("description", ""),
+                        api_key
+                    )
+
+                    score = result.get(
+                        "score",
+                        0
+                    )
+
+                    recommendation = result.get(
+                        "recommendation",
+                        "Unknown"
+                    )
+
+                    reason = result.get(
+                        "reason",
+                        ""
+                    )
+
+                except Exception as e:
+
+                    score = 0
+                    recommendation = "Error"
+                    reason = str(e)
+
+                st.info(
+                    f"""
 Role: {job.get('title', 'N/A')}
 
 Company: {job.get('company', 'N/A')}
@@ -84,11 +109,15 @@ Location: {job.get('location', 'N/A')}
 Score: {score}%
 
 Recommendation: {recommendation}
-"""
-            )
 
-            if job.get("apply_link"):
-                st.link_button(
-                    "Apply",
-                    job["apply_link"]
+Reason:
+{reason}
+"""
                 )
+
+                if job.get("apply_link"):
+
+                    st.link_button(
+                        "Apply",
+                        job["apply_link"]
+                    )

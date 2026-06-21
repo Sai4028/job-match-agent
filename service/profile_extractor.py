@@ -49,7 +49,13 @@ def extract_profile(resume_text, api_key):
     
         content = response.text
     
-        return content
-        
+        content = content.replace("```json", "")
+        content = content.replace("```", "")
+        content = content.strip()
+    
+        return json.loads(content)
+    
     except Exception as e:
-        return f"ERROR: {str(e)}"
+        return {
+            "error": str(e)
+        }
